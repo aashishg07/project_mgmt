@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'user',
     'mgmt',
+    # 'django-filters',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +78,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project_mgmt.wsgi.application'
 
 AUTH_USER_MODEL = 'user.MyUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ]
+
+}
 
 
 # Database

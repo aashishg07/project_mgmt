@@ -161,3 +161,5 @@ cython_debug/
 #.idea/
 
 project_mgmt_db.png
+
+project_mgmt/db.sqlite3

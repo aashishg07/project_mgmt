@@ -15,7 +15,7 @@ class Department(models.Model):
 
 class Project(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    department = models.OneToOneField(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=200)
     startdate = models.DateField(auto_now=True)
@@ -32,10 +32,11 @@ def update_project(instance, **kwargs):
     print("\nChanged project successfully.\n")
 
     
-
 class Document(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     doc_name = models.CharField(max_length=20)
+    file = models.FileField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.doc_name
