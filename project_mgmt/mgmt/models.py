@@ -2,6 +2,7 @@ from django.db import models
 from user.models import MyUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import datetime
 
 # Create your models here.
 
@@ -36,7 +37,7 @@ class Document(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     doc_name = models.CharField(max_length=20)
     file = models.FileField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.doc_name

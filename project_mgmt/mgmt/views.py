@@ -7,7 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import parser_classes
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.parsers import MultiPartParser
+from rest_framework import generics
+from rest_framework import filters
+import datetime
 
 # Create your views here.
 
@@ -23,6 +26,36 @@ from django_filters.rest_framework import DjangoFilterBackend
 #     queryset = Project.objects.get(pk=id)
 #     serializer_class = ProjectSerializer
 
+class DocumentList(generics.ListAPIView):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    filter_backends = [DjangoFilterBackend]
+    #Search filter
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['doc_name']
+    filterset_fields = ['created_at']
+
+class ProjectFilterList(generics.ListAPIView):
+    serializer_class = ProjectSerializer    
+    queryset = Project.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['user_id', 'startdate', 'enddate', 'department']
+    ordering_fields = ['startdate', 'enddate']
+
+    def list(self, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        user_stats = {}
+
+        for project in queryset:
+            month_year = f"{project.startdate.year} - {project.startdate.month}"
+            if month_year not in user_stats:
+                user_stats[month_year] = 1
+            else:
+                user_stats[month_year] += 1
+        
+        sorted_stats = sorted(user_stats.items(), key=lambda x: x[1], reverse=True)
+        return Response(sorted_stats)
+
 
 @api_view(['GET', 'POST'])
 def departmentList(request):
@@ -32,13 +65,13 @@ def departmentList(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
-        serializer = DepartmentSerializer(data=request.data)
+        serializer = DepartmentSerializer(data=request.data)   
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
 
 @api_view(['GET', 'DELETE'])
 def deparmentDetail(request, pk):
@@ -85,7 +118,6 @@ def projectDetail(request, pk):
         return Response({'msg': 'Deleted successfully!!!'}, status=status.HTTP_200_OK)
 
 
-from rest_framework.parsers import MultiPartParser
 
 
 @api_view(['GET', 'POST'])
@@ -105,8 +137,6 @@ def documentList(request):
 
 @api_view(['GET', 'DELETE'])
 def documentDetail(request, pk):
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['created_at']
     try:
         documents = Document.objects.get(pk=pk)
     except Document.DoesNotExist:
@@ -119,4 +149,11 @@ def documentDetail(request, pk):
         documents.delete()
         return Response({'msg': 'Deleted Successfully!!!'}, status=status.HTTP_200_OK)
     
+
+# class DocumentList(generics.ListAPIView):
+#     def get_queryset(self):
+#         document = self.request.user
+#         doc_found = Document.objects.filter(doc_name = document)
+#         serializer = DocumentSerializer(doc_found)
+#         return Response(serializer.data)
 

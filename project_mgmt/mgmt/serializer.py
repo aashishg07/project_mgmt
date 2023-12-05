@@ -12,6 +12,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'department', 'user', 'startdate', 'enddate']
 
 class DocumentSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Document
         fields = ['id', 'project', 'doc_name', 'file', 'created_at']
