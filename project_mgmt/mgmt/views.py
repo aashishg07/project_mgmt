@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser
 from rest_framework import generics
 from rest_framework import filters
-import datetime
+from user.models import MyUser
 
 # Create your views here.
 
@@ -35,26 +35,15 @@ class DocumentList(generics.ListAPIView):
     # search_fields = ['doc_name']
     filterset_fields = ['created_at']
 
-class ProjectFilterList(generics.ListAPIView):
-    serializer_class = ProjectSerializer    
-    queryset = Project.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user_id', 'startdate', 'enddate', 'department']
-    ordering_fields = ['startdate', 'enddate']
+class UserStatsAPIView(generics.ListAPIView):
+    serializer_class = ProjectSerializer
 
-    def list(self, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        user_stats = {}
-
-        for project in queryset:
-            month_year = f"{project.startdate.year} - {project.startdate.month}"
-            if month_year not in user_stats:
-                user_stats[month_year] = 1
-            else:
-                user_stats[month_year] += 1
-        
-        sorted_stats = sorted(user_stats.items(), key=lambda x: x[1], reverse=True)
-        return Response(sorted_stats)
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        month = self.request.query_params.get('month', None)
+        queryset = Project.objects.filter(user__id = user_id, startdate__month = month)
+        return queryset
+    
 
 
 @api_view(['GET', 'POST'])

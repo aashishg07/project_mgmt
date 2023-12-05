@@ -19,7 +19,7 @@ class Project(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=200)
-    startdate = models.DateField(auto_now=True)
+    startdate = models.DateField(null=True)
     enddate = models.DateField()
 
     def __str__(self):
