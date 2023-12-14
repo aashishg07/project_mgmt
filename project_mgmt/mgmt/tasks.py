@@ -3,6 +3,7 @@ from .models import Summary
 from io import StringIO
 from django.core.management import call_command
 
+
 @shared_task
 def update_summary():
     summaries = Summary.objects.all()
@@ -11,6 +12,8 @@ def update_summary():
 
 
 @shared_task
-def add_fake_project(total, id):
+def populate_fake_project_data(total, id):
     stdout = StringIO()
-    call_command("populate_fake_projects", total, id, stdout=stdout)
+    call_command('populate_fake_project', total, id, stdout=stdout)
+    
+

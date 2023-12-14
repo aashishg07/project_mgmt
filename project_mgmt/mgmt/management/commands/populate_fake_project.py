@@ -1,36 +1,31 @@
-from django.contrib.auth import get_user_model
+import random
+from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from faker import Faker
-
 from mgmt.models import Project
-
-User = get_user_model()
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
+    def handle(self, *args, **options):
+        for _ in range(100000):
+            created_at = timezone.now() - timedelta(days=random.randint(0, 365))
+            end_date = created_at + timedelta(days=random.randint(1, 30))
+            is_active = end_date > timezone.now()
 
-        parser.add_argument("total", type=int, help="total: total number of projects")
-        parser.add_argument("id", type=int, help="id: User id of the project")
+            Project.objects.create(
+                name=f'Dummy Project {_}',
+                description=f'Dummy project description {_}',
+                startdate=created_at,
+                enddate=end_date,
+                is_active=is_active,
+            )
 
-    def handle(self, *args, **kwargs):
-        faker = Faker()
-        faker.seed_instance(timezone.now().timestamp())
-        total = kwargs.get("total", 10)
-        user_id = kwargs.get("id", 1)
-        project_bulk = []
-        for i in range(total):
-            data = {
-                "user": User.objects.get(id=user_id),
-                "title": faker.word(),
-                "description": faker.text(),
-                "status": True if i % 2 == 0 else False,
-                "deadline": timezone.now(),
-            }
-            project = Project(**data)
-            project_bulk.append(project)
-        Project.objects.bulk_create(project_bulk)
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfull added total {total} projects")
-        )
+        projects_by_week = {}
+        projects = Project.objects.all()
+
+        for project in projects:
+            week_number = project.startdate.strftime('%B_week_%U')
+            projects_by_week[week_number] = projects_by_week.get(week_number, 0) + 1
+
+        for week, count in projects_by_week.items():
+            self.stdout.write(self.style.SUCCESS(f'{week}: {count}'))

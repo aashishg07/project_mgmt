@@ -23,8 +23,3 @@ class SummaryListSerializer(serializers.ModelSerializer):
         model = Summary
         fields = '__all__'
         
-
-# class Summary(serializers.ModelSerializer):
-#     class Meta:
-#         model = Summary
-#         fields = "__all__"

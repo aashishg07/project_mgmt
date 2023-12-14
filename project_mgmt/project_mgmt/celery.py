@@ -15,9 +15,9 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'mgmt.tasks.update_summary',
         'schedule': crontab(hour=0, minute=0),
     },
-    "add_fake_project_every_3_minute": {
-        "task": "mgmt.tasks.add_fake_project",
-        "schedule": crontab(minute="*/3"),
+    "add_fake_project_every_minute": {
+        "task": "mgmt.tasks.populate_fake_project_data",
+        "schedule": crontab(minute="*/1"),
         "args": (10, 1),
     },
 }
