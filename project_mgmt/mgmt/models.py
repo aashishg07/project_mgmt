@@ -2,8 +2,7 @@ from django.db import models
 from user.models import MyUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import datetime
-
+from django.utils import timezone
 # Create your models here.
 
 class Department(models.Model):
@@ -43,4 +42,26 @@ class Document(models.Model):
         return self.doc_name
     
 
+class Summary(models.Model):
+    total_monthly_projects = models.PositiveBigIntegerField(null=True, blank=True)
+    total_monthly_users = models.PositiveBigIntegerField(null=True, blank=True)
+    total_monthly_files = models.PositiveBigIntegerField(null=True, blank=True)
+    total_annual_projects = models.PositiveBigIntegerField(null=True, blank=True)
+    total_annual_users = models.PositiveBigIntegerField(null=True, blank=True)
+    total_annual_files = models.PositiveBigIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        month = timezone.now().month
+        year = timezone.now().year
+
+        self.total_monthly_projects = Project.objects.filter(startdate__month=month).count()
+        self.total_monthly_users = MyUser.objects.filter(created_at__month=month).count()
+        self.total_monthly_files = Document.objects.filter(created_at__month=month).count()
+
+        self.total_annual_projects = Project.objects.filter(startdate__year=year).count()
+        self.total_annual_users = MyUser.objects.filter(created_at__year=year).count()
+        self.total_annual_files = Document.objects.filter(created_at__year=year).count()
+
+        super().save(*args, **kwargs)

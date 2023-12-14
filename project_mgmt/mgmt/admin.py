@@ -18,6 +18,7 @@ class DepartmentAdmin(ExportActionMixin, admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Department, DepartmentAdmin)
+admin.site.register(Summary)
 
 
 

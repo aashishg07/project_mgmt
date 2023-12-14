@@ -1,6 +1,7 @@
 from django.urls import path
 from mgmt import views
-from .views import DocumentList, ProjectFilterList
+from .views import DocumentList, UserStatsAPIView, ProjectSummarize, SummaryListDetailView
+
 
 urlpatterns = [
     path('department/', views.departmentList, name="create_department"),
@@ -11,6 +12,8 @@ urlpatterns = [
     path('documents/<int:pk>/', views.documentDetail, name="detail_documents"),
     path('document/filter/?', DocumentList.as_view(), name="filter_document"),
     # path('document/search/', DocumentList.as_view(), name="search_document"),
-    path('project/filter/', ProjectFilterList.as_view(), name="filter_project_by_date")
-
+    path('project/filter/<int:user_id>/', UserStatsAPIView.as_view(), name="filter_project_by_date"),
+    path('project/sum/<int:department_id>/', ProjectSummarize.as_view(), name="filter_project_by_date"),
+    # path('summary/', summaryView, name="Summary_project_user_docs"),
+    path("summary/", SummaryListDetailView.as_view(), name="summary-detail"),
 ]
