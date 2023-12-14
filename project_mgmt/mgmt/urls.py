@@ -16,5 +16,5 @@ urlpatterns = [
     path('project/sum/<int:department_id>/', ProjectSummarize.as_view(), name="filter_project_by_date"),
     # path('summary/', summaryView, name="Summary_project_user_docs"),
     path("summary/", SummaryListDetailView.as_view(), name="summary-detail"),
-    path('project-count/', ProjectCountListApi.as_view(), name="project-count")
+    path('project-count/', ProjectCountListApi.as_view(), name="project-count"),
 ]

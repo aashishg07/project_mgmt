@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'project_mgmt.settings')
 
-app = Celery("mgmt")
+app = Celery("project_mgmt")
 
 app.config_from_object('django.conf:settings', namespace="CELERY")
 
@@ -18,6 +18,5 @@ CELERY_BEAT_SCHEDULE = {
     "add_fake_project_every_minute": {
         "task": "mgmt.tasks.populate_fake_project_data",
         "schedule": crontab(minute="*/1"),
-        "args": (10, 1),
     },
 }

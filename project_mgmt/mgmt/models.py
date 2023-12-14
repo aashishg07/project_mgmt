@@ -53,14 +53,15 @@ class Summary(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-            now = timezone.now()
+        now = timezone.now()
 
-            self.total_monthly_projects = Project.objects.filter(startdate__month=now.month).count()
-            self.total_monthly_users = MyUser.objects.filter(created_at__month=now.month).count()
-            self.total_monthly_files = Document.objects.filter(created_at__month=now.month).count()
+        self.total_monthly_projects = Project.objects.filter(startdate__month=now.month).count()
+        self.total_monthly_users = MyUser.objects.filter(created_at__month=now.month).count()
+        self.total_monthly_files = Document.objects.filter(created_at__month=now.month).count()
 
-            self.total_annual_projects = Project.objects.filter(startdate__year=now.year).count()
-            self.total_annual_users = MyUser.objects.filter(created_at__year=now.year).count()
-            self.total_annual_files = Document.objects.filter(created_at__year=now.year).count()
+        self.total_annual_projects = Project.objects.filter(startdate__year=now.year).count()
+        self.total_annual_users = MyUser.objects.filter(created_at__year=now.year).count()
+        self.total_annual_files = Document.objects.filter(created_at__year=now.year).count()
 
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+

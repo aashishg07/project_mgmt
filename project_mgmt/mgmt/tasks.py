@@ -12,8 +12,6 @@ def update_summary():
 
 
 @shared_task
-def populate_fake_project_data(total, id):
-    stdout = StringIO()
-    call_command('populate_fake_project', total, id, stdout=stdout)
-    
-
+def populate_fake_project_data(total):
+    call_command('populate_fake_project', total)
+    print(total)

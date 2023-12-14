@@ -6,18 +6,21 @@ from mgmt.models import Project
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument('total', type=int, help='Indicates the number of fake projects to be created')
+
     def handle(self, *args, **options):
-        for _ in range(100000):
+        total = options['total']
+
+        for _ in range(total):
             created_at = timezone.now() - timedelta(days=random.randint(0, 365))
             end_date = created_at + timedelta(days=random.randint(1, 30))
-            is_active = end_date > timezone.now()
 
             Project.objects.create(
                 name=f'Dummy Project {_}',
                 description=f'Dummy project description {_}',
                 startdate=created_at,
                 enddate=end_date,
-                is_active=is_active,
             )
 
         projects_by_week = {}
@@ -29,3 +32,4 @@ class Command(BaseCommand):
 
         for week, count in projects_by_week.items():
             self.stdout.write(self.style.SUCCESS(f'{week}: {count}'))
+

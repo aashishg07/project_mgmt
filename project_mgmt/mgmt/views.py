@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser
 from rest_framework import generics
 from rest_framework.views import APIView
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 
 class DocumentList(generics.ListAPIView):
@@ -153,3 +153,4 @@ class ProjectCountListApi(APIView):
                 key = f"{first_day_of_month.strftime('%B')}_week_{week}"
                 weekly_project_counts[key] = project_count
         return Response(weekly_project_counts)
+    
