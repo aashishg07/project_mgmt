@@ -11,12 +11,17 @@ class Command(BaseCommand):
         faker = Faker()
         faker.seed_instance(timezone.now().timestamp())
         total = kwargs.get("total", 10)
-        user_id = kwargs.get("id", 1)
+        # user_id = kwargs.get("id", 1)
+        # department_instance, created = Department.objects.get_or_create(id=1)
+
+        user_id = random.randint(1, 10)
+        department_id = random.randint(1, 10)
+
+        department_instance, created = Department.objects.get_or_create(id=department_id)
 
         created_at = timezone.now() - timedelta(days=random.randint(0, 365))
         end_date = created_at + timedelta(days=random.randint(1, 30))
 
-        department_instance, created = Department.objects.get_or_create(id=1)
         project_bulk = []
         for _ in range(total):
             data = {
