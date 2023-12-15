@@ -1,6 +1,5 @@
 from celery import shared_task
 from .models import Summary
-from io import StringIO
 from django.core.management import call_command
 
 
@@ -12,6 +11,5 @@ def update_summary():
 
 
 @shared_task
-def populate_fake_project_data(total):
-    call_command('populate_fake_project', total)
-    print(total)
+def populate_fake_project_data():
+    call_command('populate_fake_project')

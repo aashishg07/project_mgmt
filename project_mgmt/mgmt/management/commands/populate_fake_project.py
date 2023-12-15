@@ -2,34 +2,33 @@ import random
 from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from mgmt.models import Project
+from mgmt.models import Project, MyUser, Department
+from faker import Faker
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument('total', type=int, help='Indicates the number of fake projects to be created')
+     def handle(self, *args, **kwargs):
+        faker = Faker()
+        faker.seed_instance(timezone.now().timestamp())
+        total = kwargs.get("total", 10)
+        user_id = kwargs.get("id", 1)
 
-    def handle(self, *args, **options):
-        total = options['total']
+        created_at = timezone.now() - timedelta(days=random.randint(0, 365))
+        end_date = created_at + timedelta(days=random.randint(1, 30))
 
+        department_instance, created = Department.objects.get_or_create(id=1)
+        project_bulk = []
         for _ in range(total):
-            created_at = timezone.now() - timedelta(days=random.randint(0, 365))
-            end_date = created_at + timedelta(days=random.randint(1, 30))
+            data = {
+                "user": MyUser.objects.get(id=user_id),
+                "name": faker.word(),
+                "department": department_instance,
+                "description": faker.text(),
+                "startdate": created_at,
+                "enddate": end_date,
+            }
+            project = Project(**data)
+            project_bulk.append(project)
+        Project.objects.bulk_create(project_bulk)
 
-            Project.objects.create(
-                name=f'Dummy Project {_}',
-                description=f'Dummy project description {_}',
-                startdate=created_at,
-                enddate=end_date,
-            )
-
-        projects_by_week = {}
-        projects = Project.objects.all()
-
-        for project in projects:
-            week_number = project.startdate.strftime('%B_week_%U')
-            projects_by_week[week_number] = projects_by_week.get(week_number, 0) + 1
-
-        for week, count in projects_by_week.items():
-            self.stdout.write(self.style.SUCCESS(f'{week}: {count}'))
 
